@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>history模式测试</title>
+</head>
+<body>
+    <a href="javascript:toA()">A页面</a>
+    <a href="javascript:toB()">B页面</a>
+    <div id="app"></div>
+    <script>
+        /**
+         * pushState和replaceState方法可以改变url，但是不刷新页面，浏览器不会向服务端发送请求，具备了实现前端路由的能力。
+         * 对比hash的hashchange模式，history的变化不会触发任何事件，我们可以罗列可能触发history变化的情况，对这些情况进行拦截，以此监听history的变化。
+         * history API是H5提供的新特性，用户可以更新浏览器URL地址而不重新发起请求。
+         * history.replaceState({}, null, '/b') // 替换路由，将历史记录中的当前页面替换成url
+         * history.pushState({}, null, '/a') // 路由压栈， 保留现有记录的同时，将url加到历史记录中
+         * history.back() // 返回
+         * history.forward() // 前进
+         * history.go(-2) // 后退2次
+         * popstate事件对history的back，forward，go方法有响应，对pushstate和replaceState无响应
+         * 优点：路径比较正规
+         * 缺点：兼容性不如hash，且需要服务端的支持，否则刷新页面会报404
+         * 
+         * 
+         * hash模式和history模式的区别
+         * 外观：hash的url有个#符号，history没有，history外观更好看。
+         * 刷新：hash刷新会加载到地址栏对应的页面，history刷新浏览器会重新发起请求，如果服务端没有匹配当前的url，就会出现404页面。
+         * 兼容性：hash能兼容到IE8，history只能兼容到IE10。
+         * 服务端支持：hash（#及后面的内容）的变化不会导致浏览器向服务器发起请求；history刷新会重新向服务器发起请求，需要在服务端做处理：如果没有匹配到资源，就返回同一个html页面。
+         * 原理：hash通过监听浏览器的onhashchange()事件，查找对应的路由规则；history利用H5新增的pushState()和replaceState()方法改变url。
+         * 记录：hash模式只有#后面的内容被修改才会添加新的记录栈；history通过pushState()设置的url于当前url一模一样也会被记录到历史记录栈。
+         * 
+         * 
+         * hash模式和history模式改如何选择
+         * 如果追求外观，history更合适。
+         * 对比hash，history有以下优势：
+         * pushState()设置的url可以是与当前url同源的url；而hash只能改变#后面的内容，只能设置于当前url同文档的url。
+         * pushState()设置的url与当前url一模一样也会被添加到历史记录栈；hash必须#后面的内容被更新才会记录。
+         * pushState()可以通过stateObject参数添加任意类型的数据到记录中，而hash只能添加短字符串。
+         * pushState()可以额外设置title属性供后续使用。
+         * history模式需要后端配合。
+         * hash兼容性更好。
+        */
+        const app = document.querySelector('#app');
+        function render() { 
+            app.innerHTML = window.location.pathname;
+        }
+        function toA() {
+            /**
+             * state: 合法的JavaScript对象，可以用在popstate对象中
+             * title: 标题，基本忽略，用null
+             * url: 任意有效的url，将要跳转的新地址
+            */
+            history.pushState({}, null, '/a');
+            render();
+        }
+        function toB() {
+            history.pushState({}, null, '/b');
+            render();
+        }
+        window.addEventListener('popstate', render);
+    </script>
+</body>
+</html>
