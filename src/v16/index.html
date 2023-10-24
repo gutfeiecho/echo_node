@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blob</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        const p = "<h1>我是一个h1标题</h1>";
+        const blobHtml = new Blob([p], { type: "text/plain"});
+        console.log("🚀 ~ file: index.html:14 ~ blobHtml:", blobHtml)
+        
+        async function getBlob() {
+            // Blob.prototype.size
+            console.log("🚀 ~ file: index.html:14 ~ blobHtml.size:", blobHtml.size)
+            // Blob.prototype.type
+            console.log("🚀 ~ file: index.html:14 ~ blobHtml.type:", blobHtml.type)
+            // Blob.prototype.text() 返回一个promise，其会兑现一个包含Blob所有内容的UTF-8格式的字符串
+            document.getElementById('app').innerHTML = await blobHtml.text()
+        }
+        getBlob()
+
+        const reader = new FileReader();
+        reader.addEventListener( "loadend", () => {
+            const result = reader.result
+            console.log("🚀 ~ file: index.html:28 ~ reader.addEventListener ~ result:", result)
+        });
+        reader.readAsArrayBuffer(blobHtml);
+    </script>
+</body>
+</html>

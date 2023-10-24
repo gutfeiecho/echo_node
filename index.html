@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise</title>
+</head>
+<body>
+    <div></div>
+    <script>
+        function loadImg(src) {
+            let promise = new Promise(function(resolve, reject) {
+                let img = document.createElement('img')
+                img.onload = function () {
+                    resolve(img)
+                }
+                img.onerror = function () {
+                    reject('加载失败')
+                }
+                img.src = src
+            })
+            return promise
+        }
+        let src = "https://static.zpimg.cn/public/career_admin/image/404.pn"
+        let result = loadImg(src)
+
+        result.then((img) => {
+            console.log(img.width)
+            document.body.append(img)
+            return img
+        }).then((img) => {
+            console.log(img.height)
+            return img
+        }).then((img) => {
+            console.log("🚀 ~ file: index.html:35 ~ result.then ~ img:", img)
+        }).catch((error) => {
+            console.log("🚀 ~ file: index.html:38 ~ result.then ~ error:", error)
+        })
+    </script>
+</body>
+</html>
